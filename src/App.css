@@ -1,0 +1,14 @@
+#root {
+  width:100vw;
+  height: 100vh;
+  margin:0px;
+  background-color: #000;
+  background-image: #090979;
+  display: flex;
+  flex:1;
+  justify-content: center;
+  align-items: center;
+
+}
+
+
