@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^7.12.1",
+    "@mantine/hooks": "^7.12.1",
     "@react-three/drei": "^9.111.0",
     "@react-three/fiber": "^8.17.5",
     "@types/three": "^0.167.1",
