@@ -1,63 +1,72 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useGraph } from '@react-three/fiber';
+import React, { useRef, useEffect } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { SkeletonUtils } from 'three-stdlib';
-import * as THREE from 'three';
-import { useCharacterAnimations } from '../contexts/CharacterAnimations';
+import { useGraph } from '@react-three/fiber';
 
-export default function HiTalkGirl(props) {
+const Avatar = ({ isSpeaking, isIdle, setIsIdle }) => {
   const group = useRef();
   const { scene, animations } = useGLTF('./models/hi_talk_gurl.glb');
-  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const clone = SkeletonUtils.clone(scene);
   const { nodes, materials } = useGraph(clone);
   const { actions,names } = useAnimations(animations, group);
-  const {setAnimations, animationIndex}=useCharacterAnimations();
-  const [animationStep, setAnimationStep] = useState('hi');
-  //console.log(names)
-  useEffect(()=>{
-    if (names)
-    setAnimations(names);
-  },[names]);
-  useEffect(()=>{
-    
-    
-    actions[names[animationIndex]].reset().fadeIn(0.5).play();
-    return()=>{
-      actions[names[animationIndex]].fadeOut(0.5);
+  const playedHi = useRef(false); // To ensure 'Hi' plays only once
+  const talkingAction = useRef(null);
+  const idleAction = useRef(null);
+
+  useEffect(() => {
+    console.log("Available animations:", animations.map(animation => animation.name)); // Debug log
+  }, [animations]);
+  
+  useEffect(() => {
+    // Play the 'Hi' animation initially once
+    if (!playedHi.current) {
+      const hiAction = actions[names[0]];
+      hiAction.reset().fadeIn(0.5).play();
+      console.log('Playing Hi animation'); 
+
+      const duration = hiAction._clip.duration;
+
+      // Stop 'Hi' animation after it finishes
+      const stopAnimationTimeout = setTimeout(() => {
+        hiAction.fadeOut(0.5).stop();
+        setIsIdle(true);
+        playedHi.current = true; // Mark 'Hi' as played
+        console.log('Hi animation ended, setting isIdle to true'); 
+      }, duration * 1000);
+
+      return () => {
+        clearTimeout(stopAnimationTimeout);
+        hiAction.fadeOut(0.5).stop();
+      };
     }
-  },[animationIndex]);
+  }, [actions]);
 
-  /*useEffect(() => {
-    if (actions) {
-      const actionName = animationStep === 'hi' ? 'Hi' : 'Talking';
-      const action = actions[actionName];
+  useEffect(() => {
+    talkingAction.current = actions[names[0]];
+    idleAction.current = actions[names[0]];
+  }, [actions]);
 
-      if (action) {
-        action.setLoop(THREE.LoopOnce);
-        action.clampWhenFinished = true;
-        action.play();
-
-        // This function checks whether the animation has finished.
-        const checkAnimationComplete = () => {
-          if (action.time >= action._clip.duration) {
-            action.stop();
-            // Simulate onFinished behavior
-            if (animationStep === 'hi') {
-              setAnimationStep('talking');
-            }
-          } else {
-            requestAnimationFrame(checkAnimationComplete);
-          }
-        };
-
-        // Start checking for animation completion.
-        requestAnimationFrame(checkAnimationComplete);
+  useEffect(() => {
+    console.log('isSpeaking:', isSpeaking, 'isIdle:', isIdle); 
+    if (isSpeaking && talkingAction.current) {
+      talkingAction.current.reset().fadeIn(0.5).play();
+      console.log('Playing Talking animation',talkingAction.current); 
+      if (idleAction.current) {
+        idleAction.current.fadeOut(0.5).stop();
+        console.log('Stopping Idle animation'); 
+      }
+    } else if (isIdle && idleAction.current) {
+      talkingAction.current.reset().fadeIn(0.5).play();
+      console.log('Playing Idle animation',idleAction.current);
+      if (talkingAction.current) {
+        talkingAction.current.fadeOut(0.5).stop();
+        console.log('Stopping Talking animation');
       }
     }
-  }, [actions, animationStep]);*/
+  }, [isSpeaking, isIdle]);
 
   return (
-    <group ref={group} {...props} rotation={[ 0, 0,Math.PI / 2]} scale={[3, 3, 3]} position={[1.5,0,0]}  dispose={null}>
+    <group ref={group} rotation={[0, 0, Math.PI / 2]} scale={[3, 3, 3]} position={[1.5, 0, 0]} dispose={null}>
       <group name="Scene">
         <group name="Hi" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorig2Hips} />
@@ -74,6 +83,8 @@ export default function HiTalkGirl(props) {
       </group>
     </group>
   );
-}
+};
 
 useGLTF.preload('./models/hi_talk_gurl.glb');
+
+export default Avatar;
