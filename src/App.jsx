@@ -9,10 +9,14 @@ function App() {
   const [transcript, setTranscript] = useState(''); // State to hold recognized speech transcript
   const [isSpeaking, setIsSpeaking] = useState(false); // Manage speaking state
   const [isIdle, setIsIdle] = useState(true); // Manage idle state
-  const isAnimationPlaying = useRef(false); // To prevent multiple animations
+  const [forceIdle, setForceIdle] = useState(false); // Force idle state when spacebar is pressed
+  const audioRef = useRef(null); // Reference to the audio element
 
   // Function to handle the result from SpeechToText component
   const handleSpeechResult = async (speechTranscript) => {
+    // Reset forceIdle state when a new question is asked
+    setForceIdle(false);
+
     setTranscript(speechTranscript); // Update the state with the recognized text
     console.log('Recognized text:', speechTranscript);
 
@@ -35,46 +39,61 @@ function App() {
 
       // Play the returned audio from the backend
       const audio = new Audio(audioUrl);
+      audioRef.current = audio; // Store the audio element in the ref
 
       // Set the avatar state to speaking when audio starts playing
       setIsSpeaking(true); // Avatar should start speaking
       setIsIdle(false); // Not idle anymore
       
-      // Start playing audio
+      // Start playing audio and listen for when it ends
       audio.play();
 
-      // When audio ends, return avatar to idle state
       audio.onended = () => {
         setIsSpeaking(false); // Not speaking anymore
-        setIsIdle(true); // Back to idle, should stay idle
+        setIsIdle(true); // Back to idle
       };
     } catch (error) {
       console.error('Error sending request to the backend:', error);
     }
   };
 
+  // Stop the speaking (stop audio and reset avatar state)
+  const stopSpeaking = () => {
+    if (audioRef.current) {
+      audioRef.current.pause(); // Stop the audio
+      audioRef.current.currentTime = 0; // Reset audio playback position
+      setIsSpeaking(false); // Set speaking state to false
+      setIsIdle(true); // Set idle state to true
+      setForceIdle(true); // Force the avatar to stay idle
+    }
+  };
+
   // Handle avatar animations based on isSpeaking and isIdle states
   useEffect(() => {
-    if (isAnimationPlaying.current) return; // Prevent re-triggering animations
-
     if (isSpeaking) {
-      console.log("Start speaking animation");
-      isAnimationPlaying.current = true;
-
-      // Simulate speaking animation
-      setTimeout(() => {
-        isAnimationPlaying.current = false;
-      }, 1500); // Simulate 1.5s speaking animation
+      console.log("Speaking animation should play");
     } else if (isIdle) {
-      console.log("Start idle animation, keep playing");
-      isAnimationPlaying.current = true;
-
-      // Simulate idle animation (infinite loop)
-      setTimeout(() => {
-        isAnimationPlaying.current = false; // Can play continuously
-      }, 1500);
+      console.log("Idle animation should play");
     }
-  }, [isSpeaking, isIdle]);
+  }, [isSpeaking, isIdle]); // Trigger effect when isSpeaking or isIdle changes
+
+  // Handle keypress events, specifically the spacebar
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.code === 'Space') {
+        if (isSpeaking) {
+          stopSpeaking(); // Stop speaking when spacebar is pressed
+        } else if (forceIdle) {
+          console.log("Avatar forced to stay idle, awaiting new question");
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress); // Clean up the event listener
+    };
+  }, [isSpeaking, forceIdle]);
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>

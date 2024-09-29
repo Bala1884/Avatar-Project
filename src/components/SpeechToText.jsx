@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const SpeechToText = ({ onResult }) => {
+const SpeechToText = ({ onResult,setForceIdle }) => {
   let recognition;
   const [isRecognizing, setIsRecognizing] = useState(false);
 
@@ -38,8 +38,9 @@ const SpeechToText = ({ onResult }) => {
 
     const handleKeyDown = (e) => {
       if ((e.key === 'T' || e.key === 't') && !isRecognizing) {
-        recognition.start(); // Start only if recognition is not active
-        setIsRecognizing(true); // Set flag when recognition starts
+        // setForceIdle(false)
+        recognition.start();
+        setIsRecognizing(true);
         console.log('Speech recognition started');
       }
     };
