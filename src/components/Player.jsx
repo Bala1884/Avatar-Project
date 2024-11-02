@@ -2,41 +2,67 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { SkeletonUtils } from 'three-stdlib';
 import { useGraph } from '@react-three/fiber';
+import * as THREE from 'three'; // Import THREE
 
-export function Player({ isSpeaking, isIdle }) { // Use destructuring for props
+export function Player({ isSpeaking, isIdle }) { 
   const group = useRef();
   const { scene } = useGLTF('./models/player.glb');
   const { animations } = useGLTF('./models/animations.glb');
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
-  const { actions, names } = useAnimations(animations, group);
+  const { actions, names, mixer } = useAnimations(animations, group); // Get mixer
   const [currentAnimation, setCurrentAnimation] = useState(null);
+  const [talkingIndex, setTalkingIndex] = useState(1); // State to keep track of which talking animation is active
 
   useEffect(() => {
-    console.log("Available animations:", animations.map(animation => animation.name)); // Debug log
+    console.log("Available animations:", animations.map(animation => animation.name)); 
   }, [animations]);
 
-  const handleAnimation = (index) => {
+  const handleAnimation = (index, loopType = THREE.LoopRepeat) => {
     const newAction = actions[names[index]];
-    if(newAction){
-        if (currentAnimation) {
-          currentAnimation.fadeOut(0.5); // Smoothly fade out previous animation
-        }
-        newAction.reset().fadeIn(0.5).play();
-        setCurrentAnimation(newAction);
+    if (newAction) {
+      if (currentAnimation) {
+        currentAnimation.fadeOut(0.5); 
       }
-      else {
-        console.warn(`No animation action found for index: ${index}`);
-      }
+      newAction.reset().fadeIn(0.5).play();
+      newAction.setLoop(loopType); // Set loop type (LoopRepeat or LoopOnce)
+      setCurrentAnimation(newAction);
+    } else {
+      console.warn(`No animation action found for index: ${index}`);
     }
+  };
+
+  const handleAnimationEnd = () => {
+    setTalkingIndex(prevIndex => {
+      const nextIndex = prevIndex === 1 ? 2 : 1; // Toggle between talking1 (index 1) and talking2 (index 2)
+      handleAnimation(nextIndex, THREE.LoopOnce); // Start the new talking animation with LoopOnce
+      return nextIndex;
+    });
+  };
 
   useEffect(() => {
+    let talkingInterval;
+
     if (isIdle) {
       handleAnimation(0); // Idle animation
-    } else if (isSpeaking) {     
-      handleAnimation(1); // Speaking animation
+      clearInterval(talkingInterval); // Stop alternating animations when idle
+    } else if (isSpeaking) {
+      handleAnimation(talkingIndex); // Start with the current talking animation
+
+      // Alternate between talking1 (index 1) and talking2 (index 2)
+      talkingInterval = setInterval(() => {
+        setTalkingIndex(prevIndex => {
+          const nextIndex = prevIndex === 1 ? 2 : 1; // Toggle between 1 and 2
+          handleAnimation(nextIndex); // Play the new animation
+          return nextIndex;
+        });
+      }, 3000); // Adjust the interval time (2000ms = 2 seconds)
     }
-  }, [isIdle, isSpeaking]); // Ensure this effect re-runs when isIdle or isSpeaking changes
+
+    return () => {
+      clearInterval(talkingInterval); // Cleanup the interval when the component unmounts or when the speaking state changes
+    };
+  }, [isIdle, isSpeaking, talkingIndex]);
 
   return (
     <group ref={group} dispose={null} scale={[3, 3, 3]} position={[1, -2, 0]}>

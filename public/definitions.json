@@ -1,0 +1,36 @@
+{
+  "definitions": [
+    {
+      "question": "What is Cloud Computing?",
+      "answer": "Cloud computing refers to the delivery of various services over the internet, including data storage, servers, databases, networking, and software. It allows users to access and use resources remotely without needing local infrastructure or hardware."
+    },
+    {
+      "question": "What is Augmented Reality?",
+      "answer": "Augmented Reality (AR) is a technology that overlays digital content, such as images, videos, or 3D models, onto the real world through devices like smartphones, tablets, or AR glasses. AR enhances the user's perception of reality by integrating digital elements into their surroundings."
+    },
+    {
+      "question": "What is Virtual Reality (VR)?",
+      "answer": "Virtual Reality (VR) is a technology that creates an immersive, simulated environment using computer-generated graphics. Users typically experience VR through headsets or other specialized devices, which allow them to interact with and explore the virtual world as if they were physically present."
+    },
+    {
+      "question": "What is AI Artificial Intelligence?",
+      "answer": "Artificial Intelligence (AI) is the simulation of human intelligence processes by machines, particularly computer systems. This includes learning, reasoning, problem-solving, and decision-making. AI systems can perform tasks that normally require human intelligence, such as speech recognition, visual perception, and language translation."
+    },
+    {
+      "question": "What is Machine Learning (ML)?",
+      "answer": "Machine Learning (ML) is a subset of AI that focuses on the development of algorithms and statistical models that allow computers to learn and improve from experience without being explicitly programmed. It is used in a wide range of applications, from recommendation systems to autonomous driving."
+    },
+    {
+      "question": "What is Blockchain?",
+      "answer": "Blockchain is a decentralized digital ledger that records transactions across many computers in such a way that the records are secure, transparent, and cannot be altered retroactively. It is commonly used for cryptocurrencies, supply chain management, and secure voting systems."
+    },
+    {
+      "question": "What is the Internet of Things (IoT)?",
+      "answer": "The Internet of Things (IoT) refers to a network of physical objects, or 'things', embedded with sensors, software, and other technologies to connect and exchange data with other devices and systems over the internet. IoT enables automation and smart applications in various sectors, such as healthcare, manufacturing, and home automation."
+    },
+    {
+      "question": "What is 5G?",
+      "answer": "5G is the fifth generation of wireless network technology, designed to deliver faster speeds, lower latency, and more reliable internet connections compared to previous generations. It enables new technologies like IoT, smart cities, and autonomous vehicles by providing improved data transmission capabilities."
+    }
+  ]
+}

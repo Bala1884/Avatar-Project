@@ -6,10 +6,12 @@ import Fbx from "./Fbx.jsx";
 import HiGirl from './HiGirl.jsx';
 import Hi_Talk_Girl from './Hi_Talk_Gurl.jsx';
 import { Player } from './Player.jsx';
-function Exp({isSpeaking,isIdle,}) {
+import Player_lipsync from './Player_lipsync.jsx'
+import {AvatarLs} from './AvatarLs.jsx'
+function Exp({isSpeaking,isIdle,lipsyncData,audioProgress}) {
   return (
     <>
-      <Player isSpeaking={isSpeaking} isIdle={isIdle}/>
+      <Player_lipsync isSpeaking={isSpeaking} isIdle={isIdle} lipsyncData={lipsyncData} audioProgress={audioProgress}/>
         {/*<HiGirl/>*/}
         </>
       
