@@ -164,11 +164,11 @@ export default function Player_lipsync({ isSpeaking, isIdle, audio, lipsync }) {
   }, [isIdle, isSpeaking, talkingIndex, actions, names, currentAnimation]);
   
   
-  useFrame((state) => {
-    if (headFollow) {
-      group.current.getObjectByName("Head").lookAt(state.camera.position);
-    }
-  });
+  // useFrame((state) => {
+  //   if (headFollow) {
+  //     group.current.getObjectByName("Head").lookAt(state.camera.position);
+  //   }
+  // });
 
   // useEffect(() => {
   //   if (isIdle) {
@@ -215,7 +215,7 @@ export default function Player_lipsync({ isSpeaking, isIdle, audio, lipsync }) {
   
 
   return (
-    <group ref={group} dispose={null} position={[1, -2, 0]} scale={[3, 3, 3]}>
+    <group ref={group} dispose={null} position={[3, 4, 0]} scale={[7, 7, 7]} rotation={[0,0,-30]}>
       <primitive object={nodes.Hips} />
       <skinnedMesh geometry={nodes.Wolf3D_Hair.geometry} material={materials.Wolf3D_Hair} skeleton={nodes.Wolf3D_Hair.skeleton} />
       <skinnedMesh geometry={nodes.Wolf3D_Body.geometry} material={materials.Wolf3D_Body} skeleton={nodes.Wolf3D_Body.skeleton} />

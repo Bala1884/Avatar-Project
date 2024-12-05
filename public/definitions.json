@@ -5,6 +5,10 @@
       "answer": "Cloud computing refers to the delivery of various services over the internet, including data storage, servers, databases, networking, and software. It allows users to access and use resources remotely without needing local infrastructure or hardware."
     },
     {
+      "question": "hello",
+      "answer": "Hi, how can i help you?"
+    },
+    {
       "question": "What is Augmented Reality?",
       "answer": "Augmented Reality (AR) is a technology that overlays digital content, such as images, videos, or 3D models, onto the real world through devices like smartphones, tablets, or AR glasses. AR enhances the user's perception of reality by integrating digital elements into their surroundings."
     },
